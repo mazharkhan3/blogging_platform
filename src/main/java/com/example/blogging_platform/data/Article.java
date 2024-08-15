@@ -2,6 +2,7 @@ package com.example.blogging_platform.data;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -18,7 +19,7 @@ public class Article {
 
     private String tags;
 
-    private Date createdOn;
+    private LocalDateTime createdOn;
 
     public Long getId() {
         return id;
@@ -44,11 +45,11 @@ public class Article {
         this.content = content;
     }
 
-    public Date getCreatedOn() {
+    public LocalDateTime getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(Date createdOn) {
+    public void setCreatedOn(LocalDateTime createdOn) {
         this.createdOn = createdOn;
     }
 

@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +32,7 @@ public class ArticleController {
 
         article.setTitle(articleDTO.getTitle());
         article.setContent(articleDTO.getContent());
-        article.setCreatedOn(new Date());
+        article.setCreatedOn(LocalDateTime.now());
         article.setTags(articleDTO.getTags());
 
         articleRepository.save(article);
@@ -37,17 +40,16 @@ public class ArticleController {
     }
 
     @GetMapping()
-    public ResponseEntity<Iterable<Article>> getAllArticles(@RequestParam String tags, @RequestParam String date) {
-        Iterable<Article> articles;
-        if (!tags.isEmpty()) {
-            articles = articleRepository.findByTagsContaining(tags);
-        } else if (!date.isEmpty()) {
-            articles = articleRepository.findByCreatedOn_Date(date);
-        } else if (!tags.isEmpty() && !date.isEmpty()) {
-            articles = articleRepository.findByTagsContainingAndCreatedOn_Date(tags, date);
-        } else {
-            articles = articleRepository.findAll();
+    public ResponseEntity<Iterable<Article>> getAllArticles(@RequestParam(required = false) String tags, @RequestParam(required = false) LocalDate date) {
+        LocalDateTime start = null;
+        LocalDateTime end = null;
+
+        if (date != null) {
+            start = date.atStartOfDay();
+            end = date.atTime(LocalTime.MAX);
         }
+
+        Iterable<Article> articles = articleRepository.findArticles(tags, date, start, end);
 
         var articleDTOs = new ArrayList<Article>();
 
